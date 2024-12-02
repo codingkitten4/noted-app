@@ -8,6 +8,9 @@
 In order to start using it on your machine, you must have Python installed. Next, you will enter the Python virtual environment by entering this command in PowerShell:<br>
 <code>noted\Scripts\activate</code>
 
+You will have to create a <code>.env</code> file in the main directory to add your Gemini API key. Add this line to it: <br>
+<code>GEMINI_API_KEY = "(your API key)"</code>
+
 Then, the required packages and dependencies will have to be installed:<br>
 <code>pip install -U -n google-generative-ai</code><br>
 <code>pip install opencv-python</code><br>
