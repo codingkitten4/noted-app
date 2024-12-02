@@ -4,22 +4,27 @@ from img_handling import import_image
 from PIL import Image
 
 app = ctk.CTk()
-app.geometry("1000x700")
+app.geometry("700x550")
+app.resizable(False, False)
 app.title("Noted!")
+app.rowconfigure(0, weight=1)
+
+video_label = ctk.CTkLabel(app, text="", fg_color="transparent", wraplength=300)
+video_label.grid(row=0, column=0, padx=10, pady=10, columnspan=3)
 
 def import_image_display():
-    import_image()
+    import_image(video_label)
     global img
     img = Image.open(r"images/unchanged.jpg")
 
 summarize = ctk.CTkLabel(app, text="", fg_color="transparent", wraplength=300)
-summarize.grid(row=1, column=2, padx=10)
+summarize.grid(row=2, column=2, padx=10)
 
 question = ctk.CTkLabel(app, text="", fg_color="transparent", wraplength=300)
-question.grid(row=2, column=2, padx=10)
+question.grid(row=3, column=2, padx=10)
 
 text = ctk.CTkLabel(app, text="", fg_color="transparent", wraplength=300)
-text.grid(row=3, column=2, padx=10)
+text.grid(row=4, column=2, padx=10)
 
 def summarize_image_display():
     summarize_img_text = summarize_image(img)
@@ -34,15 +39,15 @@ def convert_to_text_display():
     text.configure(text=return_img_text)
 
 import_btn = ctk.CTkButton(app, text="take picture", command=import_image_display)
-import_btn.grid(row=0, column=0, padx=10)
+import_btn.grid(row=1, column=0, padx=10, pady=10)
 
 summarize_btn = ctk.CTkButton(app, text="summarize", command=summarize_image_display)
-summarize_btn.grid(row=1, column=0, padx=10)
+summarize_btn.grid(row=2, column=0, padx=10, pady=10)
 
 questions_btn = ctk.CTkButton(app, text="questions", command=make_questions_display)
-questions_btn.grid(row=2, column=0, padx=10)
+questions_btn.grid(row=3, column=0, padx=10, pady=10)
 
 text_btn = ctk.CTkButton(app, text="convert", command=convert_to_text_display)
-text_btn.grid(row=3, column=0, padx=10)
+text_btn.grid(row=4, column=0, padx=10, pady=10)
 
 app.mainloop()
