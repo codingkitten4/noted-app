@@ -2,52 +2,77 @@ import customtkinter as ctk
 from gemini import summarize_image, make_questions, return_text
 from img_handling import import_image
 from PIL import Image
+import os
 
-app = ctk.CTk()
-app.geometry("700x550")
-app.resizable(False, False)
-app.title("Noted!")
-app.rowconfigure(0, weight=1)
+class NotedApp(ctk.CTk):
+    def __init__(self):
+        super().__init__()
+        self.geometry("700x500")
+        self.title("Noted!")
+        self.resizable(False, False)
+        self.columnconfigure(1, weight=1)
+        self.rowconfigure(5, weight=1)
 
-video_label = ctk.CTkLabel(app, text="", fg_color="transparent", wraplength=300)
-video_label.grid(row=0, column=0, padx=10, pady=10, columnspan=3)
+        self.video_label = ctk.CTkLabel(self, text="", fg_color="transparent", wraplength=100, width=400, height=300)
+        self.video_label.grid(row=0, column=1, padx=10, pady=10, rowspan=5)
+        import_image(self.video_label, activate_camera=False, width=400, height=300)
 
-def import_image_display():
-    import_image(video_label)
-    global img
-    img = Image.open(r"images/unchanged.jpg")
+        self.img = None
 
-summarize = ctk.CTkLabel(app, text="", fg_color="transparent", wraplength=300)
-summarize.grid(row=2, column=2, padx=10)
+        self.create_widgets()
 
-question = ctk.CTkLabel(app, text="", fg_color="transparent", wraplength=300)
-question.grid(row=3, column=2, padx=10)
+    def import_image_display(self):
+        import_image(self.video_label, activate_camera=True, width=400, height=300)
+        try:
+            self.img = Image.open(r'images/unchanged.jpg')
+        except FileNotFoundError:
+            print("Error: The image file was not found.")
+            self.img = None
 
-text = ctk.CTkLabel(app, text="", fg_color="transparent", wraplength=300)
-text.grid(row=4, column=2, padx=10)
+    def summarize_image_display(self):
+        if self.img:
+            summarize_img_text = summarize_image(self.img)
+            self.summarize_label.configure(text=summarize_img_text)
+        else:
+            print("Error: No image to summarize.")
 
-def summarize_image_display():
-    summarize_img_text = summarize_image(img)
-    summarize.configure(text=summarize_img_text)
+    def make_questions_display(self):
+        if self.img:
+            questions_img_text = make_questions(self.img)
+            self.question_label.configure(text=questions_img_text)
+        else:
+            print("Error: No image to generate questions from.")
 
-def make_questions_display():
-    questions_img_text = make_questions(img)
-    question.configure(text=questions_img_text)
+    def convert_to_text_display(self):
+        if self.img:
+            return_img_text = return_text(self.img)
+            self.text_label.configure(text=return_img_text)
+        else:
+            print("Error: No image to convert to text.")
 
-def convert_to_text_display():
-    return_img_text = return_text(img)
-    text.configure(text=return_img_text)
 
-import_btn = ctk.CTkButton(app, text="take picture", command=import_image_display)
-import_btn.grid(row=1, column=0, padx=10, pady=10)
+    def create_widgets(self):
+        import_btn = ctk.CTkButton(self, text="take picture", command=self.import_image_display)
+        import_btn.grid(row=0, column=0, padx=10, pady=10)
 
-summarize_btn = ctk.CTkButton(app, text="summarize", command=summarize_image_display)
-summarize_btn.grid(row=2, column=0, padx=10, pady=10)
+        summarize_btn = ctk.CTkButton(self, text="summarize", command=self.summarize_image_display)
+        summarize_btn.grid(row=1, column=0, padx=10, pady=10)
 
-questions_btn = ctk.CTkButton(app, text="questions", command=make_questions_display)
-questions_btn.grid(row=3, column=0, padx=10, pady=10)
+        questions_btn = ctk.CTkButton(self, text="questions", command=self.make_questions_display)
+        questions_btn.grid(row=2, column=0, padx=10, pady=10)
 
-text_btn = ctk.CTkButton(app, text="convert", command=convert_to_text_display)
-text_btn.grid(row=4, column=0, padx=10, pady=10)
+        text_btn = ctk.CTkButton(self, text="convert", command=self.convert_to_text_display)
+        text_btn.grid(row=3, column=0, padx=10, pady=10)
 
-app.mainloop()
+        self.summarize_label = ctk.CTkLabel(self, text="", fg_color="transparent", wraplength=300)
+        self.summarize_label.grid(row=2, column=2, padx=10)
+
+        self.question_label = ctk.CTkLabel(self, text="", fg_color="transparent", wraplength=300)
+        self.question_label.grid(row=3, column=2, padx=10)
+
+        self.text_label = ctk.CTkLabel(self, text="", fg_color="transparent", wraplength=300)
+        self.text_label.grid(row=4, column=2, padx=10)
+
+if __name__ == "__main__":
+    app = NotedApp()
+    app.mainloop()
